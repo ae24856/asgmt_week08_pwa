@@ -1,70 +1,95 @@
-# Getting Started with Create React App
+# 📚 BookList App
+A modern React-based book catalog app with tag filtering, search, and detail viewing. Integrates with a custom GraphQL backend using Apollo Client.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 🚀 Features
+ - View book collection with cover, description, and tags
+ - Real-time search and tag filtering
+ - Book detail pages with routing via react-router-dom
+ - Add new books via a form (with validation)
+ - Apollo Client integration for GraphQL queries & mutations
+ - Supports JSON server mock or real DB backend
 
-## Available Scripts
+## 🖼️ Demo
 
-In the project directory, you can run:
+ This is a demo image. Please adopt books and ideas with love. 💛
 
-### `npm start`
+## ⚙️ Technologies Used
+  - Frontend	Backend
+  - React + MUI	FastAPI + Strawberry GraphQL
+  - React Router	JSON Server / Mock DB
+  - Apollo Client	CORS Middleware
+  - JSX + Vite	UUID for ID generation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 📁 Project Structure
+```
+  booklist-app/
+  ├── public/
+  │   └── img/         # Book cover images
+  ├── src/
+  │   ├── components/  # Reusable UI components
+  │   ├── BookList.js
+  │   ├── BookDetail.js
+  │   ├── BookForm.js
+  │   ├── BookContext.js
+  │   └── App.js
+  └── server/
+      ├── main.py      # FastAPI + GraphQL backend
+      └── db.json      # Mock database (optional)
+```
+## 🧪 Example Queries
+ - GraphQL Sample: Get Book by ID
+```query($bookId: ID!) {
+  book(id: $bookId) {
+    title
+    author
+    img
+    description
+    tags
+  }
+}
+```
+- Mutation: Add Book
+```
+mutation {
+  addBook(input: {
+    title: "新書名",
+    author: "作者名稱",
+    isbn: "123456",
+    description: "簡介內容",
+    coverImage: "/img/book.jpg",
+    tags: ["奇幻", "冒險"]
+  }) {
+    id
+    title
+  }
+}
+```
+## 📦 Setup Instructions
+1. Backend
+  ```
+  cd server/
+  python main.py
+  Runs at http://localhost:8000/graphql.
+  ```
+2. Frontend (React + Vite)
+  ```
+  cd booklist-app/
+  npm install
+  npm run dev
+  Runs at http://localhost:5173/ (or as configured).
+  ```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 遇到的挑戰：
+1. 寫在後端的假資料，原本用物件的方式寫，沒辦法透過 GraphQL 看到
+- 解決方式：格式要寫成 json 格式
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+README.md 說明文件：
+專案簡介。
+技術架構說明。
+如何安裝與執行專案。
+遇到的挑戰與解決方案。
+未來展望（可選）。
+Demo 網站連結（如果有的話）。
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

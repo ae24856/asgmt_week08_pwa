@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ApolloProvider } from '@apollo/react-hooks'
 import ApolloClient from 'apollo-boost';
+import { HashRouter } from 'react-router-dom';  
 
 // 建立 Apollo Client
 const client = new ApolloClient({
@@ -13,11 +14,13 @@ const client = new ApolloClient({
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
+    <HashRouter>
     <ApolloProvider client={client}>
       <App />
     </ApolloProvider>
-  </React.StrictMode>
+    </HashRouter>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
