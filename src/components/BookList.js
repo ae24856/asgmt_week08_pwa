@@ -1,6 +1,6 @@
 // BookList.js
 import React, { useState } from 'react';
-import { Link, Container, Typography, Grid, Box, Card, CardContent, CardActionArea, CardMedia, CardActions, Button, TextField, MenuItem } from '@mui/material';
+import { Container, Typography, Grid, Box, Card, CardContent, CardActionArea, CardMedia, CardActions, Button, TextField, MenuItem } from '@mui/material';
 import { useBooks } from './BookContext';
 import { Link as RouterLink } from 'react-router-dom';
 import LocalOfferRoundedIcon from '@mui/icons-material/LocalOfferRounded';
@@ -79,17 +79,14 @@ function BookList() {
         )}
         {filteredBooks.map((book) => (
           <Grid item key={book.id} size={{ xs: 6, sm: 4, md: 4 }}>
-            <Link
-              component={RouterLink}
-              to={`/books/${book.id}`}
-              underline='none'
-            >
             <Card
               sx={{
                 width: '100%',
               }}
               key={book.id}>
-              <CardActionArea>
+              <CardActionArea  
+                component={RouterLink}
+                to={`/books/${book.id}/detail`}>
                 <CardMedia
                   component="img"
                   image={book.coverImage}
@@ -115,13 +112,11 @@ function BookList() {
               <CardActions sx={{ display: { xs: 'none', sm: 'block' },  pt: 0}}>
                 <Button size="small" sx={{ color:'#8CB4FF', textTransform: 'none' }}
                   component={RouterLink}
-                  to={`/books/${book.id}`}
-                >
+                  to={`/books/${book.id}/detail`}>
                   See more...
                 </Button>
               </CardActions>
             </Card>
-            </Link>
           </Grid>
         ))}
       </Grid>

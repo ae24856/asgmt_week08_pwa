@@ -1,22 +1,29 @@
 // BookDetail.js
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useBooks } from './BookContext';
-import { Typography, Container, Box } from '@mui/material';
+import { Typography, Container, Button, Stack, Box } from '@mui/material';
 
 function BookDetail() {
   const { id } = useParams();
-  const { state } = useBooks();
-  const book = state.books.find((b) => b.id.toString() === id);
+  const navigate = useNavigate();
+  const { state, deleteBook } = useBooks();
+
+  const book = state.books.find(b => String(b.id) === id);
 
   if (!book) {
     return <Typography variant="h6">找不到這本書</Typography>;
   }
-  console.log('收到的 id:', id);
-console.log('目前書籍列表:', state.books);
+
+  const handleDelete = () => {
+    if (window.confirm('確定要刪除這本書嗎？')) {
+      deleteBook(book.id);
+      navigate('/'); // 刪除完回首頁
+    }
+  };
 
   return (
-    <Container maxWidth='md' sx={{ mt: 4, mb: 6 }}>
+    <Container maxWidth="md" sx={{ mt: 5, mb: 6 }}>
       <Box
         sx={{
           display: 'flex',
@@ -37,14 +44,21 @@ console.log('目前書籍列表:', state.books);
             objectFit: 'cover',
           }}
         />
-
         {/* 文字區塊 */}
         <Box>
-          <Typography variant="subtitle1" gutterBottom><strong>書名：</strong>{book.title}</Typography>
-          <Typography variant="subtitle1" gutterBottom><strong>作者：</strong>{book.author}</Typography>
+          <Typography variant="h4" gutterBottom>{book.title}</Typography>
+          <Typography variant="subtitle1">作者：{book.author}</Typography>
           <Typography variant="subtitle1" gutterBottom><strong>ISBN：</strong>{book.isbn}</Typography>
           <Typography variant="subtitle1" gutterBottom><strong>分類：</strong>{book.tags}</Typography>
           <Typography variant="body1" sx={{ mt: 2 }}>{book.description}</Typography>
+          <Stack direction="row" spacing={2} sx={{ mt: 4 }}>
+            <Button variant="outlined" component={RouterLink} to={`/books/${book.id}`}>
+              編輯 Edit
+            </Button>
+            <Button variant="outlined" color="error" onClick={handleDelete}>
+              刪除 Delete
+            </Button>
+          </Stack>
         </Box>
       </Box>
     </Container>

@@ -1,14 +1,18 @@
 import './App.css';
-import Users from './Users'
 import { Routes, Route, Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button, Container, Stack, Divider } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Container, Stack, Divider, Box } from '@mui/material';
 import BookList from './components/BookList';
 import BookDetail from './components/BookDetail';
 import BookForm from './components/BookForm';
 import Footer from './components/Footer';
-// import dogImage from './img/banner.png';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { BookProvider } from './components/BookContext';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+
+const client = new ApolloClient({
+  uri: 'http://localhost:4000/graphql',
+  cache: new InMemoryCache(),
+});
 
 const theme = createTheme({
   typography: {
@@ -19,15 +23,62 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
+      <ApolloProvider client={client}>
       <BookProvider>
-        <img src="/img/banner.png" alt="banner"
-          style={{
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent:'center', alignItems: 'center' }}>
+        <Box
+          component="img"
+          src="/img/banner_03.png"
+          alt="banner"
+          sx={{
             width: '100%',
-            maxWidth: '800px',
-            display: 'block',
-            margin: '20px auto',
+            maxWidth: '250px',
+            margin: '14px',
+            display: {
+              xs: 'none',
+              sm: 'block',
+            },
           }}
         />
+          <Button color="inherit" component={Link} to="/" sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="h3" 
+              sx={{
+                fontSize: {
+                  xs: '1.8rem',
+                },
+                marginTop: '1.5rem'
+              }}>
+                狗狗的書單們
+            </Typography>
+            <Typography variant="h5"
+              sx={{ 
+                fontSize: {
+                  xs: '1.3rem',
+                }
+              }}>
+                My Pocket Booklist
+            </Typography>
+          </Button>
+          <Box sx={{ display: 'flex', flexDirection: {xs:'row', md:'column'}, p:3, alignItems:'center'}}>
+          <Box
+            component="img"
+            src="/img/banner_01.png"
+            alt="banner"
+            sx={{
+              width: {
+                xs: '150px',
+                md: '210px',
+              },
+              margin: '10px',
+            }}
+          />
+          <Box >
+            <Typography variant="body2">用愛書的心愛狗，用愛狗的心愛書</Typography>
+            <Typography variant="body2">Love Books, Love Dogs.</Typography>
+          </Box>
+          </Box>
+        </Box>
+
         <AppBar
           sx={{
             backgroundColor: '#ffffff',
@@ -48,7 +99,7 @@ function App() {
                 <Typography variant="h6">狗狗 · 書櫃</Typography>
                 <Typography variant="body2">Book List</Typography>
               </Button>
-              <Button color="inherit" component={Link} to="/books/add" sx={{ display: 'flex', flexDirection: 'column'}}>
+              <Button color="inherit" component={Link} to="/books/add" sx={{ display: 'flex', flexDirection: 'column' }}>
                 <Typography variant="h6">新增書籍</Typography>
                 <Typography variant="body2">Add Book</Typography>
               </Button>
@@ -61,12 +112,14 @@ function App() {
           <Routes>
             <Route path="/" element={<BookList />} />
             <Route path="/books/add" element={<BookForm />} />
-            <Route path="/books/:id" element={<BookDetail />} />
+            {/* <Route path="/books/:id" element={<BookDetail />} /> */}
+            <Route path="/books/:id" element={<BookForm />} />         {/* 編輯 */}
+            <Route path="/books/:id/detail" element={<BookDetail />} /> {/* 詳細 */}
           </Routes>
         </Container>
         <Footer />
-
       </BookProvider>
+      </ApolloProvider>
     </ThemeProvider>
   );
 }
