@@ -1,0 +1,61 @@
+{
+  "books": [
+    {
+      "title": "哈利波特",
+      "author": "JK 羅琳",
+      "isbn": "654321",
+      "description": "一位平凡男孩，在十一歲生日那天得知自己是巫師，並踏入神秘的霍格華茲魔法學院。在友情、冒險與黑魔法的交織下，他逐步揭開自己與最強黑巫師之間的命運連結。",
+      "coverImage": "img/book.jpg",
+      "tags": [
+        "奇幻"
+      ],
+      "id": "1"
+    },
+    {
+      "id": "2",
+      "title": "達文西密馬",
+      "author": "abc",
+      "isbn": "123456",
+      "description": "一場巴黎羅浮宮的神祕謀殺，牽引出隱藏在宗教與藝術中的重大祕密。符號學教授羅柏·蘭登與密碼專家蘇菲聯手破解層層線索，展開一場橫跨歐洲的驚險追尋。",
+      "coverImage": "/img/book2.jpg",
+      "tags": [
+        "偵探"
+      ]
+    },
+    {
+      "id": "3",
+      "title": "白雪公主",
+      "author": "abc",
+      "isbn": "123456",
+      "description": "白雪公主因美貌遭皇后嫉妒，逃入森林展開奇幻冒險。",
+      "coverImage": "/img/book3.jpg",
+      "tags": [
+        "偵探",
+        "愛情"
+      ]
+    },
+    {
+      "id": "4",
+      "title": "小王子",
+      "author": "abc",
+      "isbn": "123456",
+      "description": "透過一位小王子的旅行探索人生的意義。",
+      "coverImage": "/img/book4.jpg",
+      "tags": [
+        "待閱讀",
+        "奇幻"
+      ]
+    },
+    {
+      "title": "測試書",
+      "author": "一",
+      "isbn": "123",
+      "description": "測試書書",
+      "coverImage": "nope",
+      "tags": [
+        "測試"
+      ],
+      "id": "ace3"
+    }
+  ]
+}

@@ -82,6 +82,25 @@ mutation {
 ### 遇到的挑戰：
 1. 寫在後端的假資料，原本用物件的方式寫，沒辦法透過 GraphQL 看到
 - 解決方式：格式要寫成 json 格式
+2. 新增、編輯、刪除沒有同步到後端
+- 目前的操作流程是：
+BookForm 元件的 Btn 按下送出 →
+直接 dispatch({ type: 'ADD_BOOK', payload: book }) →
+✅ 只改了 React 的狀態（畫面更新）
+❌ 但沒有把資料送到後端
+
+
+前端 React
+  ↓ GraphQL 請求
+GraphQL Server (apollo-server-express)
+  ↓ REST API 請求
+json-server (資料儲存在 db.json)
+
+
+手機沒有資料酷東西
+server.listen({ host: '0.0.0.0', port: 4000 }).then(({ url }) => {
+  console.log(`Server ready at ${url}`);
+});
 
 
 README.md 說明文件：
