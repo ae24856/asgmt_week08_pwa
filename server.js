@@ -140,10 +140,10 @@ const resolvers = {
 
 const server = new ApolloServer({ typeDefs, resolvers });
 
-// server.listen({ host: '0.0.0.0', port: 4000 }).then(({ url }) => {
-//   console.log(`Server ready at ${url}`);
-// });
-
-server.listen().then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
+server.listen({ host: '0.0.0.0', port: 4000 }).then(({ url }) => {
+  console.log(`Server ready at ${url}`);
 });
+
+// server.listen().then(({ url }) => {
+//   console.log(`🚀 Server ready at ${url}`);
+// });

@@ -1,52 +1,49 @@
-// storage.js
-import { openDB } from 'idb';
+const STORAGE_KEY = 'books';
 
-const DB_NAME = 'book-db';
-const STORE_NAME = 'books';
-
-export async function initDB() {
-  return openDB(DB_NAME, 1, {
-    upgrade(db) {
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
-      }
-    },
-  });
+export function saveBooksToLocal(books) {
+  console.log('saveBooksToLocal called, books:', books);
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+  } catch (e) {
+    console.error('儲存書籍到 localStorage 失敗:', e);
+  }
 }
 
-// 一次存整包書籍（通常用在初次同步）
-export async function saveBooksIdb(books) {
-  const db = await initDB();
-  const tx = db.transaction(STORE_NAME, 'readwrite');
-  const store = tx.objectStore(STORE_NAME);
-  books.forEach(book => store.put(book));
-  await tx.done;
+export function getBooksFromLocal() {
+  try {
+    const booksJson = localStorage.getItem(STORAGE_KEY);
+    return booksJson ? JSON.parse(booksJson) : [];
+  } catch (e) {
+    console.error('從 localStorage 讀取書籍失敗:', e);
+    return [];
+  }
 }
 
-// 單本新增（對應 addBook）
-export async function addBookIdb(book) {
-  const db = await initDB();
-  const tx = db.transaction(STORE_NAME, 'readwrite');
-  await tx.objectStore(STORE_NAME).put(book);
-  await tx.done;
+// export function addBookToLocal(book) {
+//   const books = getBooksFromLocal();
+//   books.push(book);
+//   saveBooksToLocal(books);
+// }
+
+
+export function addBookToLocal(book) {
+  const books = getBooksFromLocal();
+  console.log('[addBookToLocal] 目前 localStorage 內容:', books);
+  books.push(book);
+  console.log('[addBookToLocal] 新增書籍:', book);
+  saveBooksToLocal(books);
 }
 
-// 單本刪除（對應 deleteBook）
-export async function deleteBookIdb(id) {
-  const db = await initDB();
-  const tx = db.transaction(STORE_NAME, 'readwrite');
-  await tx.objectStore(STORE_NAME).delete(id);
-  await tx.done;
+
+
+export function deleteBookFromLocal(id) {
+  const books = getBooksFromLocal().filter(book => book.id !== id);
+  saveBooksToLocal(books);
 }
 
-// 單本更新（可直接重複使用 saveBook()）
-export async function updateBookIdb(book) {
-  return addBookIdb(book); // 因為 put() 本身支援更新
+export function updateBookInLocal(updatedBook) {
+  const books = getBooksFromLocal().map(book =>
+    book.id === updatedBook.id ? updatedBook : book
+  );
+  saveBooksToLocal(books);
 }
-
-// 讀取所有書籍（通常在離線時呼叫）
-export async function getBooks() {
-  const db = await initDB();
-  return db.getAll(STORE_NAME);
-}
-
