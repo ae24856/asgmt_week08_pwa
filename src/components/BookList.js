@@ -98,7 +98,7 @@ function BookList() {
                   }}
                   onError={(e) => {
                     e.target.onerror = null; // 防止無限觸發
-                    e.target.src = '/img/notFound.png'; // 預設圖片
+                    e.target.src = 'https://i.postimg.cc/SRbgm8XJ/notFound.png'; // 預設圖片
                   }}
                 />
                 <CardContent sx={{ pb:1 }}>
