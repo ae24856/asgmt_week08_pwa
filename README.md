@@ -30,12 +30,10 @@ A modern React-based book catalog app with tag filtering, search, and detail vie
   │   ├── BookList.js
   │   ├── BookDetail.js
   │   ├── BookForm.js
-  │   ├── BookContext.js
+  │   ├── BookContext.js  │ 
   │   └── App.js
-  └── server/
-      ├── main.py      # FastAPI + GraphQL backend
-      └── db.json      # Mock database (optional)
-```
+  ├──── server.pjs      #  GraphQL backend
+  └──── db.json      # Mock database
 ## 🧪 Example Queries
  - GraphQL Sample: Get Book by ID
 ```query($bookId: ID!) {

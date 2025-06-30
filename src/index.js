@@ -26,7 +26,7 @@ root.render(
 // 2. 再註冊 Service Worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
+    navigator.serviceWorker.register('/sw.js')
       .then(registration => {
         console.log('Service Worker 註冊成功:', registration);
         if (registration.installing) {

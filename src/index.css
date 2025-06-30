@@ -7,8 +7,16 @@ body {
   font-style: normal;
 }
 
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.App {
+  text-align: center;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
 }

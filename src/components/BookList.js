@@ -91,6 +91,15 @@ function BookList() {
                   component="img"
                   image={book.coverImage}
                   alt={book.title}
+                   sx={{
+                    width: '100%',
+                    aspectRatio: '1 / 1',
+                    objectFit: 'cover',
+                  }}
+                  onError={(e) => {
+                    e.target.onerror = null; // 防止無限觸發
+                    e.target.src = '/img/notFound.jpg'; // 預設圖片
+                  }}
                 />
                 <CardContent sx={{ pb:1 }}>
                   <Typography variant="h6" component="div">

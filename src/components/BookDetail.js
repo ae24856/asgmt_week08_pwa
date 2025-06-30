@@ -2,7 +2,7 @@
 import React from 'react';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useBooks } from './BookContext';
-import { Typography, Container, Button, Stack, Box } from '@mui/material';
+import { Typography, Button, Stack, Box, Container } from '@mui/material';
 
 function BookDetail() {
   const { id } = useParams();
@@ -23,7 +23,7 @@ function BookDetail() {
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 5, mb: 6 }}>
+    <Container maxWidth="md" sx={{ mt: 5}}>
       <Box
         sx={{
           display: 'flex',
@@ -43,6 +43,10 @@ function BookDetail() {
             borderRadius: 2,
             objectFit: 'cover',
           }}
+          onError={(e) => {
+            e.target.onerror = null; // 防止無限觸發
+            e.target.src = '/img/notFound.jpg'; // 預設圖片
+          }}
         />
         {/* 文字區塊 */}
         <Box>
@@ -61,7 +65,7 @@ function BookDetail() {
           </Stack>
         </Box>
       </Box>
-    </Container>
+      </Container>
   );
 }
 

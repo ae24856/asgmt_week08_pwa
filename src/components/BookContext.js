@@ -64,8 +64,9 @@
 
 
 
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import { gql, useQuery, useMutation } from '@apollo/client';
+import { addBookIdb, saveBooksIdb, deleteBookIdb, updateBookIdb } from '../storage';
 
 // 建立 Context
 const BookContext = createContext();
@@ -149,6 +150,9 @@ export function BookProvider({ children }) {
   React.useEffect(() => {
     if (data?.books) {
       dispatch({ type: 'SET_BOOKS', payload: data.books });
+
+      // 初始同步也會寫入 IndexedDB
+      saveBooksIdb(data.books).catch(console.error);
     }
   }, [data]);
 
@@ -162,6 +166,9 @@ export function BookProvider({ children }) {
     try {
       const { data } = await addBookMutation({ variables: { input } });
       dispatch({ type: 'ADD_BOOK', payload: data.addBook });
+
+      // 同步寫入 IndexedDB
+    await addBookIdb(data.addBook);
     } catch (e) {
       console.error('Add book error:', e);
     }
@@ -172,6 +179,9 @@ export function BookProvider({ children }) {
     try {
       await deleteBookMutation({ variables: { id } });
       dispatch({ type: 'REMOVE_BOOK', payload: id });
+
+      // 同步刪除 IndexedDB
+    await deleteBookIdb(id);
     } catch (e) {
       console.error('Delete book error:', e);
     }
@@ -180,11 +190,12 @@ export function BookProvider({ children }) {
   // 編輯書籍
   const updateBook = async (id, input) => {
     try {
-      console.log('Update variables:', { id, input });
-// await updateBookMutation({ variables: { id, input } });
-
+      // console.log('Update variables:', { id, input });
       const { data } = await updateBookMutation({ variables: { id, input } });
       dispatch({ type: 'UPDATE_BOOK', payload: data.updateBook });
+
+      // 同步更新 IndexedDB
+    await updateBookIdb(data.updateBook);
     } catch (e) {
       console.error('Update book error:', e);
     }
