@@ -86,12 +86,12 @@ const resolvers = {
   Query: {
     // books: () => books,
     books: async () => {
-      const res = await fetch('http://localhost:3000/books');
+      const res = await fetch('http://localhost:5500/books');
       return await res.json();
     },    
     // book: (_, { id }) => books.find(b => b.id === id),
     book: async (_, { id }) => {
-      const res = await fetch(`http://localhost:3000/books/${id}`);
+      const res = await fetch(`http://localhost:5500/books/${id}`);
       if (res.status === 404) return null;
       return await res.json();
     }
@@ -99,7 +99,7 @@ const resolvers = {
   Mutation: {
     // fetch 這裡是呼叫 json-server 寫入資料
     addBook: async (_, { input }) => {
-      const res = await fetch('http://localhost:3000/books', {
+      const res = await fetch('http://localhost:5500/books', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(input)
@@ -107,7 +107,7 @@ const resolvers = {
       return await res.json();
     },
     updateBook: async (_, { id, input }) => {
-      const res = await fetch(`http://localhost:3000/books/${id}`, {
+      const res = await fetch(`http://localhost:5500/books/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(input),
@@ -116,11 +116,11 @@ const resolvers = {
     },
     deleteBook: async (_, { id }) => {
       // 先查資料再刪除
-      const res = await fetch(`http://localhost:3000/books/${id}`);
+      const res = await fetch(`http://localhost:5500/books/${id}`);
       if (res.status === 404) return null;
       const bookToDelete = await res.json();
 
-      await fetch(`http://localhost:3000/books/${id}`, {
+      await fetch(`http://localhost:5500/books/${id}`, {
         method: 'DELETE'
       });
     }

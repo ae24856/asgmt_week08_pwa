@@ -35,7 +35,7 @@ function BookDetail() {
         {/* 圖片區塊 */}
         <Box
           component="img"
-          src={book.coverImage}
+          src={book.coverImage || 'https://i.postimg.cc/SRbgm8XJ/notFound.png'}
           alt={book.title}
           sx={{
             width: '100%',

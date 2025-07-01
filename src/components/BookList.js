@@ -89,7 +89,7 @@ function BookList() {
                 to={`/books/${book.id}/detail`}>
                 <CardMedia
                   component="img"
-                  image={book.coverImage}
+                  image={book.coverImage || 'https://i.postimg.cc/SRbgm8XJ/notFound.png'}
                   alt={book.title}
                    sx={{
                     width: '100%',
