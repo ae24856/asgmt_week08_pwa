@@ -47,37 +47,13 @@
       ]
     },
     {
-      "title": "qww",
-      "author": "q",
-      "isbn": "q",
-      "description": "q",
-      "coverImage": "q",
-      "tags": [
-        "q"
-      ],
-      "id": "b84f"
-    },
-    {
-      "id": "ab7b",
-      "title": "d",
-      "author": "d",
-      "isbn": "d",
-      "description": "d",
-      "coverImage": "d",
-      "tags": [
-        "d"
-      ]
-    },
-    {
-      "id": "739d",
-      "title": "a",
-      "author": "a",
-      "isbn": "a",
-      "description": "a",
-      "coverImage": "https://i.postimg.cc/SRbgm8XJ/notFound.png",
-      "tags": [
-        "d"
-      ]
+      "id": "5295",
+      "title": "asd",
+      "author": "as",
+      "isbn": "as",
+      "description": "",
+      "coverImage": "s",
+      "tags": []
     }
   ]
 }

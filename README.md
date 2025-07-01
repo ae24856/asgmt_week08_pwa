@@ -101,6 +101,15 @@ server.listen({ host: '0.0.0.0', port: 4000 }).then(({ url }) => {
 });
 
 
+
+2. 所以你這邊的 if 判斷就是：
+如果是本地開發、非 PWA，且 GraphQL 回來有資料，
+則把 GraphQL 讀到的書籍放到 store，並快取到 localStorage。
+
+否則，代表是 PWA 模式、或正式環境，
+直接從 localStorage 讀資料，避免依賴網路。
+
+
 README.md 說明文件：
 專案簡介。
 技術架構說明。
@@ -108,5 +117,8 @@ README.md 說明文件：
 遇到的挑戰與解決方案。
 未來展望（可選）。
 Demo 網站連結（如果有的話）。
+
+
+
 
 

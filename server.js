@@ -97,17 +97,6 @@ const resolvers = {
     }
   },
   Mutation: {
-    // addBook: (_, { input }) => {
-    //   const newBook = { id: Date.now().toString(), ...input };
-    //   books.push(newBook);
-    //   return newBook;
-    // },
-    // deleteBook: (_, { id }) => {
-    //   const index = books.findIndex(b => b.id === id);
-    //   if (index === -1) return null;
-    //   const deleted = books.splice(index, 1);
-    //   return deleted[0];
-    // }
     // fetch 這裡是呼叫 json-server 寫入資料
     addBook: async (_, { input }) => {
       const res = await fetch('http://localhost:3000/books', {
@@ -140,10 +129,10 @@ const resolvers = {
 
 const server = new ApolloServer({ typeDefs, resolvers });
 
-server.listen({ host: '0.0.0.0', port: 4000 }).then(({ url }) => {
-  console.log(`Server ready at ${url}`);
-});
-
-// server.listen().then(({ url }) => {
-//   console.log(`🚀 Server ready at ${url}`);
+// server.listen({ host: '0.0.0.0', port: 4000 }).then(({ url }) => {
+//   console.log(`Server ready at ${url}`);
 // });
+
+server.listen().then(({ url }) => {
+  console.log(`🚀 Server ready at ${url}`);
+});

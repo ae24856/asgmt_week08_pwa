@@ -1,24 +1,19 @@
-import React, { createContext, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import { gql, useQuery, useMutation } from '@apollo/client';
-import {
-  getBooksFromLocal,
-  saveBooksToLocal,
-  addBookToLocal,
-  deleteBookFromLocal,
-  updateBookInLocal,
-} from '../storage';
+import { getBookLocal, saveBookLocal, addBookLocal, deleteBookLocal, updateBookInLocal } from '../storage';
 
-
-// 判斷是否 PWA (display-mode: standalone 或 iOS navigator.standalone)
+// 判斷是否 PWA
+// display-mode: standalone 表示網頁是用 PWA 安裝方式打開
+// window.navigator.standalone === true 表示在 iOS Safari 下，從「加到主畫面」的捷徑打開
 function isPWA() {
-  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  return window.matchMedia('(display-mode: standalone)').matches || 
+  window.navigator.standalone === true;
 }
 
 // 判斷是否本地開發環境 (localhost 或 127.0.0.1)
 function isLocalhost() {
   return ['localhost', '127.0.0.1'].includes(window.location.hostname);
 }
-
 
 // 建立 Context
 const BookContext = createContext();
@@ -95,15 +90,20 @@ const UPDATE_BOOK = gql`
 
 // Provider 元件
 export function BookProvider({ children }) {
-  // const { loading, error, data } = useQuery(GET_BOOKS);
+  // 只在「開發階段的瀏覽器模式」下使用 GraphQL API，否則用離線的 localStorage
   const useGraphQL = !isPWA() && isLocalhost();
-
-  const [state, dispatch] = React.useReducer(bookReducer, { books: [] });
-  const isOnline = navigator.onLine;
+  const [state, dispatch] = useReducer(bookReducer, { books: [] });
 
   const { loading, error, data } = useQuery(GET_BOOKS, {
+    // 當 skip 是 true 時，不會執行 GraphQL 請求
     skip: !useGraphQL,
-    fetchPolicy: 'network-only',
+    
+    // 預設是會先從快取（cache）裡找資料，如果有資料就直接用，不會發網路請求。
+    // 如果快取沒有資料，才會發出網路請求抓資料。
+    // fetchPolicy：'cache-first'
+    
+    // 每次都強制從網路重新抓取資料
+    // fetchPolicy: 'network-only',
   });
 
   // 使用 mutation hook
@@ -111,114 +111,28 @@ export function BookProvider({ children }) {
   const [deleteBookMutation] = useMutation(DELETE_BOOK);
   const [updateBookMutation] = useMutation(UPDATE_BOOK);
   
-
-  // 資料載入：PWA 用 localStorage，開發用 GraphQL
+  // 資料載入：開發用 GraphQL， PWA 用 localStorage
   useEffect(() => {
+    // data?.books?.length 當 data 存在且 books 是陣列且長度 > 0 時才執行
     if (useGraphQL && data?.books?.length) {
       dispatch({ type: 'SET_BOOKS', payload: data.books });
-      saveBooksToLocal(data.books);
-      console.log('線上模式（開發）：從 GraphQL 載入並快取');
+      saveBookLocal(data.books);
+      console.log('LocalHost 模式：從 GraphQL 載入並快取');
     } else {
-      const localBooks = getBooksFromLocal();
+      const localBooks = getBookLocal();
       dispatch({ type: 'SET_BOOKS', payload: localBooks });
       console.log('PWA 或離線模式：從 localStorage 載入書籍');
     }
+  // 切換環境或模式或有新資料回來，會更新畫面和快取
   }, [useGraphQL, data]);
-
-
-  // // 1. 應用啟動時，先從 localStorage 載入資料（避免空白）
-  // useEffect(() => {
-  //   const localBooks = getBooksFromLocal();
-  //   if (localBooks.length > 0) {
-  //     dispatch({ type: 'SET_BOOKS', payload: localBooks });
-  //     console.log('成功從 localStorage 載入資料');
-  //   }
-  // }, []);
-
-  // // 2. GraphQL 拿到資料後，更新狀態並寫入 localStorage
-  // useEffect(() => {
-  //   if (data?.books && data.books.length > 0) {
-  //     dispatch({ type: 'SET_BOOKS', payload: data.books });
-  //     saveBooksToLocal(data.books);
-  //   }
-  // }, [data]);
-
-
-
-  
-
-
-
-  
-
-
-    // 目前你做到這裡就可以讓：
-
-  // 🟢 線上時 → 存到 GraphQL + localStorage
-  
-  // 🔴 離線時 → 存到 localStorage 並即時顯示
-  
-  // 但當 網路恢復後，你可以實作一個簡單的機制自動同步：
-
-
-  // useEffect(() => {
-  //   if (!navigator.onLine) return;
-  
-  //   const localBooks = getBooksFromLocal();
-  //   const offlineBooks = localBooks.filter(book => book.id?.startsWith('offline-'));
-  
-  //   if (offlineBooks.length > 0) {
-  //     offlineBooks.forEach(book => {
-  //       addBookMutation({ variables: { input: book } })
-  //         .then(({ data }) => {
-  //           updateBookInLocal(data.addBook); // 替換 offline id
-  //         })
-  //         .catch(console.error);
-  //     });
-  //   }
-  // }, [addBookMutation]); // ✅ 加上它
-  
-
-  // 新增書籍
-  // const addBook = async (input) => {
-  //   try {
-  //     const { data } = await addBookMutation({ variables: { input } });
-  //     dispatch({ type: 'ADD_BOOK', payload: data.addBook });
-  //     addBookToLocal(data.addBook)
-  //   } catch (e) {
-  //     console.error('Add book error:', e);
-  //   }
-  // };
-
-  // const addBook = async (input) => {
-  //   if (!isOnline) {
-  //     // 離線狀態下直接寫 localStorage
-  //     const offlineBook = {
-  //       ...input,
-  //       id: `offline-${Date.now()}`, // 用 timestamp 做唯一 ID
-  //     };
-  //     dispatch({ type: 'ADD_BOOK', payload: offlineBook });
-  //     addBookToLocal(offlineBook);
-  //     console.log('📴 離線模式：已儲存到 localStorage', offlineBook);
-  //     return;
-  //   }
-  
-  //   try {
-  //     const { data } = await addBookMutation({ variables: { input } });
-  //     dispatch({ type: 'ADD_BOOK', payload: data.addBook });
-  //     addBookToLocal(data.addBook);
-  //   } catch (e) {
-  //     console.error('Add book error:', e);
-  //   }
-  // };
 
    // 新增書籍
    const addBook = async (input) => {
     if (!useGraphQL) {
-      // PWA 或非開發環境，離線時用 localStorage
+      // PWA 時用 localStorage
       const offlineBook = { ...input, id: `offline-${Date.now()}` };
       dispatch({ type: 'ADD_BOOK', payload: offlineBook });
-      addBookToLocal(offlineBook);
+      addBookLocal(offlineBook);
       console.log('📴 PWA/離線新增，存 localStorage:', offlineBook);
       return;
     }
@@ -226,48 +140,17 @@ export function BookProvider({ children }) {
     try {
       const { data } = await addBookMutation({ variables: { input } });
       dispatch({ type: 'ADD_BOOK', payload: data.addBook });
-      addBookToLocal(data.addBook);
+      addBookLocal(data.addBook);
     } catch (e) {
       console.error('Add book error:', e);
     }
   };
 
-
-
-
   // 刪除書籍
-  // const deleteBook = async (id) => {
-  //   try {
-  //     await deleteBookMutation({ variables: { id } });
-  //     dispatch({ type: 'REMOVE_BOOK', payload: id });
-  //     deleteBookFromLocal(id);
-  //   } catch (e) {
-  //     console.error('Delete book error:', e);
-  //   }
-  // };
-
-  // const deleteBook = async (id) => {
-  //   if (!isOnline) {
-  //     dispatch({ type: 'REMOVE_BOOK', payload: id });
-  //     deleteBookFromLocal(id);
-  //     console.log('📴 離線刪除已更新 localStorage, ID:', id);
-  //     return;
-  //   }
-  
-  //   try {
-  //     await deleteBookMutation({ variables: { id } });
-  //     dispatch({ type: 'REMOVE_BOOK', payload: id });
-  //     deleteBookFromLocal(id);
-  //   } catch (e) {
-  //     console.error('Delete book error:', e);
-  //   }
-  // };
-
-  // 刪除書籍 (同步本地和 GraphQL)
   const deleteBook = async (id) => {
     if (!useGraphQL) {
       dispatch({ type: 'REMOVE_BOOK', payload: id });
-      deleteBookFromLocal(id);
+      deleteBookLocal(id);
       console.log('📴 PWA/離線刪除 localStorage, ID:', id);
       return;
     }
@@ -275,48 +158,11 @@ export function BookProvider({ children }) {
     try {
       await deleteBookMutation({ variables: { id } });
       dispatch({ type: 'REMOVE_BOOK', payload: id });
-      deleteBookFromLocal(id);
+      deleteBookLocal(id);
     } catch (e) {
       console.error('Delete book error:', e);
     }
   };
-
-
-
-  
-  
-  
-
-  // 編輯書籍
-  // const updateBook = async (id, input) => {
-  //   try {
-  //     // console.log('Update variables:', { id, input });
-  //     const { data } = await updateBookMutation({ variables: { id, input } });
-  //     dispatch({ type: 'UPDATE_BOOK', payload: data.updateBook });
-  //     updateBookInLocal(data.updateBook)
-  //   } catch (e) {
-  //     console.error('Update book error:', e);
-  //   }
-  // };
-
-  // const updateBook = async (id, input) => {
-  //   if (!isOnline) {
-  //     const updatedBook = { ...input, id }; // 保留原本 ID
-  //     dispatch({ type: 'UPDATE_BOOK', payload: updatedBook });
-  //     updateBookInLocal(updatedBook);
-  //     console.log('📴 離線編輯已儲存 localStorage:', updatedBook);
-  //     return;
-  //   }
-  
-  //   try {
-  //     const { data } = await updateBookMutation({ variables: { id, input } });
-  //     dispatch({ type: 'UPDATE_BOOK', payload: data.updateBook });
-  //     updateBookInLocal(data.updateBook);
-  //   } catch (e) {
-  //     console.error('Update book error:', e);
-  //   }
-  // };
-  
 
   // 更新書籍
   const updateBook = async (id, input) => {
