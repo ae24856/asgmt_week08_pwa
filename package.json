@@ -2,6 +2,7 @@
   "name": "booklist-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://ae24856.github.io/asgmt_week08_pwa",
   "dependencies": {
     "@apollo/client": "^3.13.8",
     "@apollo/react-hooks": "^4.0.0",
@@ -28,7 +29,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "json-server": "json-server --watch db.json --port 5500"
+    "json-server": "json-server --watch db.json --port 5500",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -47,5 +50,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }

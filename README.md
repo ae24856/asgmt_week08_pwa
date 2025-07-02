@@ -1,4 +1,4 @@
-# ![dog](/public/icon.jpg) My Pocket BookList App
+# ![dog](/public/icon-1.jpg) My Pocket BookList App
 
 是不是常常想：「這本書看起來不錯，下次一定要讀」，
 這是一個風格為狗狗的書籍收藏小天地！
@@ -27,6 +27,8 @@ React 小應用幫你把想看的書通通收集起來，方便搜尋、分類�
 
 ## 🖼️ Demo
 
+  ![demo](./public/img/demo.gif)
+
  This is a demo image. Please adopt books and ideas with love. 💛
 
 ## 📁 Project Structure
@@ -35,7 +37,7 @@ React 小應用幫你把想看的書通通收集起來，方便搜尋、分類�
   booklist-app/
   ├── public/
   │   └── img/        # Book cover images
-  ├── src/
+  ├── src/his is a demo image. Please adopt books and ideas with love. 💛
   │   ├── components/ # Reusable UI components
   │   ├── BookList.js
   │   ├── BookDetail.js
@@ -77,50 +79,41 @@ Runs at `http://localhost:3000/`.
 
 1. 寫在後端的假資料，原本用物件的方式寫，沒辦法透過 GraphQL 看到
 
-```javascript
-{
-  id: "1",
-  title: "哈利波特"
-}
-```
+- ```javascript
+  {
+    id: "1",
+    title: "哈利波特"
+  }
+  ```
 
 - 解決方式：格式要寫成 json 格式
 
-```javascript
-{
-  "id": "1",
-  "title": "哈利波特"
-}
-```
+  ```javascript
+  {
+    "id": "1",
+    "title": "哈利波特"
+  }
+  ```
 
 2. 新增、編輯、刪除沒有同步到後端
 
 - 目前的操作流程是：
-BookForm 元件的 Btn 按下送出 →
-直接 dispatch({ type: 'ADD_BOOK', payload: book }) →
-✅ 只改了 React 的狀態（畫面更新）
+BookForm 元件的 Btn 按下送出 → 只改了 React 的狀態（畫面更新）<br>
 ❌ 但沒有把資料送到後端
 
-前端 React
-  ↓ GraphQL 請求
-GraphQL Server (apollo-server-express)
-  ↓ REST API 請求
-json-server (資料儲存在 db.json)
+- 解決方式：繼續增加後續流程 <br>
+前端 → GraphQL 請求 → GraphQL Server → API 請求 → json-server
 
-手機沒有資料酷東西
-server.listen({ host: '0.0.0.0', port: 4000 }).then(({ url }) => {
-  console.log(`Server ready at ${url}`);
-});
+3. 本地開發環境 → 資料會寫進 json-server <br> PWA 離線環境 → 資料會存到 localStorage，ID 是 offline-*
 
-2. 所以你這邊的 if 判斷就是：
-如果是本地開發、非 PWA，且 GraphQL 回來有資料，
-則把 GraphQL 讀到的書籍放到 store，並快取到 localStorage。
+- 在 PWA 離線時新增了書籍，切回本地開發模式後：<br>
+❌ 新增的離線書籍（id: offline-*）不會寫回伺服器，也不會繼續出現在畫面上
 
-否則，代表是 PWA 模式、或正式環境，
-直接從 localStorage 讀資料，避免依賴網路。
+- 解決方式：找到 offline-開頭的離線書籍 → 送出 mutation，同步到 server → 合併書籍列表 → 更新狀態與本地快取
 
 ## 未來展望
 
-手機
-
-Demo 網站連結（如果有的話）
+- 手機版可以存成 PWA，並在本地端開發時可以新增書籍書籍，但無法連進去 graphql、也沒有辦法離線使用
+- 書封圖片上傳
+- 使用者認證
+- 單元測試

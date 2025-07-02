@@ -94,7 +94,7 @@ export function BookProvider({ children }) {
   const useGraphQL = !isPWA() && isLocalhost();
   const [state, dispatch] = useReducer(bookReducer, { books: [] });
 
-  const { loading, error, data } = useQuery(GET_BOOKS, {
+  const { data } = useQuery(GET_BOOKS, {
     // 當 skip 是 true 時，不會執行 GraphQL 請求
     skip: !useGraphQL,
     
@@ -110,52 +110,53 @@ export function BookProvider({ children }) {
   const [addBookMutation] = useMutation(ADD_BOOK);
   const [deleteBookMutation] = useMutation(DELETE_BOOK);
   const [updateBookMutation] = useMutation(UPDATE_BOOK);
-  
-  // // 資料載入：開發用 GraphQL， PWA 用 localStorage
-  // useEffect(() => {
-  //   // data?.books?.length 當 data 存在且 books 是陣列且長度 > 0 時才執行
-  //   if (useGraphQL && data?.books?.length) {
-  //     dispatch({ type: 'SET_BOOKS', payload: data.books });
-  //     saveBookLocal(data.books);
-  //     console.log('LocalHost 模式：從 GraphQL 載入並快取');
-  //   } else {
-  //     const localBooks = getBookLocal();
-  //     dispatch({ type: 'SET_BOOKS', payload: localBooks });
-  //     console.log('PWA 或離線模式：從 localStorage 載入書籍');
-  //   }
-  // // 切換環境或模式或有新資料回來，會更新畫面和快取
-  // }, [useGraphQL, data]);
-
-
 
   useEffect(() => {
-    if (useGraphQL && data?.books?.length) {
-      const serverBooks = data.books;
-      const localBooks = getBookLocal();
+    async function syncAndMergeBooks() {
+      if (useGraphQL && data?.books?.length) {
+        const serverBooks = data.books;
+        const localBooks = getBookLocal();
   
-      // 先把 GraphQL 的書放進 Map（用 ID 當 key）
-      const bookMap = new Map();
-      serverBooks.forEach(book => bookMap.set(book.id, book));
+        const offlineBooks = localBooks.filter(book => book.id.startsWith('offline-'));
+        const syncedBooks = [];
   
-      // 把 localStorage 中 "offline-*" 的資料加進來
-      localBooks
-        .filter(book => book.id.startsWith('offline-'))
-        .forEach(book => bookMap.set(book.id, book)); // 不會覆蓋掉 GraphQL 原始資料
+        for (const book of offlineBooks) {
+          try {
+            const { id, ...input } = book;
+            const res = await addBookMutation({ variables: { input } });
   
-      const mergedBooks = Array.from(bookMap.values());
+            addBookLocal(res.data.addBook);
+            deleteBookLocal(book.id);
   
-      dispatch({ type: 'SET_BOOKS', payload: mergedBooks });
-      saveBookLocal(mergedBooks);
+            syncedBooks.push(res.data.addBook);
+          } catch (e) {
+            console.error('離線書同步失敗', book, e);
+          }
+        }
   
-      console.log('GraphQL 模式：合併離線資料與伺服器資料');
-    } else {
-      const localBooks = getBookLocal();
-      dispatch({ type: 'SET_BOOKS', payload: localBooks });
-      console.log('PWA 或離線模式：從 localStorage 載入書籍');
+        const bookMap = new Map();
+  
+        serverBooks.forEach(book => bookMap.set(book.id, book));
+        syncedBooks.forEach(book => bookMap.set(book.id, book));
+  
+        const mergedBooks = Array.from(bookMap.values());
+  
+        dispatch({ type: 'SET_BOOKS', payload: mergedBooks });
+        saveBookLocal(mergedBooks);
+  
+        console.log('GraphQL 模式：離線書同步完成並合併資料');
+      } else {
+        const localBooks = getBookLocal();
+        dispatch({ type: 'SET_BOOKS', payload: localBooks });
+        console.log('PWA 或離線模式：從 localStorage 載入書籍');
+      }
     }
-  }, [useGraphQL, data]);
   
-
+    syncAndMergeBooks();
+  }, [useGraphQL, data, addBookMutation]);
+  
+  
+  
    // 新增書籍
    const addBook = async (input) => {
     if (!useGraphQL) {
@@ -217,8 +218,6 @@ export function BookProvider({ children }) {
     <BookContext.Provider
       value={{
         state,
-        loading,
-        error,
         addBook,
         deleteBook,
         updateBook,

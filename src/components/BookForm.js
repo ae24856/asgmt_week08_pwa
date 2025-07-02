@@ -5,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 // import { addBookServer, editBookServer, deleteBookServer } from '../BookService';
 
 function BookForm() {
-  const { state, loading, error, addBook, updateBook, } = useBooks();
+  const { state, addBook, updateBook, } = useBooks();
   const { id } = useParams(); // 從路由拿 id，undefined 表示新增
   const navigate = useNavigate();
 
