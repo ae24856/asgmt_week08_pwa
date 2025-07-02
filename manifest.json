@@ -1,0 +1,28 @@
+
+
+
+{
+  "name": "狗狗的書單們",
+  "short_name": "狗 · 書單",
+  "description": "一個簡單的 PWA 網站，給予大家有記錄自己的口袋書單。",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#5B4F47",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "zh-TW"
+}

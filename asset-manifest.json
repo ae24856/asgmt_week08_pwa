@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/asgmt_week08_pwa/static/css/main.bb6d320c.css",
+    "main.js": "/asgmt_week08_pwa/static/js/main.b07dc371.js",
+    "static/js/453.6d94b67f.chunk.js": "/asgmt_week08_pwa/static/js/453.6d94b67f.chunk.js",
+    "index.html": "/asgmt_week08_pwa/index.html",
+    "main.bb6d320c.css.map": "/asgmt_week08_pwa/static/css/main.bb6d320c.css.map",
+    "main.b07dc371.js.map": "/asgmt_week08_pwa/static/js/main.b07dc371.js.map",
+    "453.6d94b67f.chunk.js.map": "/asgmt_week08_pwa/static/js/453.6d94b67f.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.bb6d320c.css",
+    "static/js/main.b07dc371.js"
+  ]
+}
