@@ -37,7 +37,7 @@ React 小應用幫你把想看的書通通收集起來，方便搜尋、分類�
   booklist-app/
   ├── public/
   │   └── img/        # Book cover images
-  ├── src/his is a demo image. Please adopt books and ideas with love. 💛
+  ├── src/
   │   ├── components/ # Reusable UI components
   │   ├── BookList.js
   │   ├── BookDetail.js
